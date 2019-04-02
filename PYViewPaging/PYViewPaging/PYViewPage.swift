@@ -90,6 +90,8 @@ class PYViewPage: UIView {
     }
     fileprivate var _heightItem: CGFloat = 0
     fileprivate var _timeStart: TimeInterval = 0
+    
+    private var _isFirstLoading = true
 
     // MARK: - public properties
     var indexOfPage: Int = 0
@@ -148,6 +150,7 @@ class PYViewPage: UIView {
     }
     
     func setupData(_ dataModels: [FXConfigCellModel]) {
+        _isFirstLoading = true
         _dataPages = dataModels
         _colloectionView.reloadData()
         _pageControl.setupData(dataModels.count)
@@ -180,9 +183,31 @@ extension PYViewPage: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         
         if let model = _dataPages?[indexPath.row] {
             cell?.setupData(model)
+            model.pageCell = cell
+            
+            if _isFirstLoading {
+                cell?.connectItem()
+                _isFirstLoading = false
+            }
         }
         
         return cell!
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        // 这里才关联element
+        if let temp = cell as? PYViewPageCell {
+            temp.disConnectItem()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if let model = _dataPages?[indexPath.row] {
+            // 加载图片
+            DispatchQueue.global().async {
+                _ = model.help?.coverImage
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -286,12 +311,14 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
             }) { (finished) in
                 if finished && isPageChanged {
                     self._delegate?.didScrollToPage(self.indexOfPage, item: item)
+                    item.pageCell?.connectItem()
                 }
             }
         } else {
             _colloectionView.contentOffset = offset
             if isPageChanged {
                 _delegate?.didScrollToPage(indexOfPage, item: item)
+                item.pageCell?.connectItem()
             } else {
                 _pageControl.willJumpToIndex(0)
             }

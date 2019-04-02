@@ -32,12 +32,12 @@ class PYViewPageCell: UICollectionViewCell {
         player = PYViewPageMedia.init(frame: CGRect.init())
         contentView.addSubview(player)
         
-        imgVIcon = UIImageView.init(frame: CGRect.init())
-        imgVIcon.layer.cornerRadius = 8
-        imgVIcon.layer.borderWidth = 0.5
-        imgVIcon.layer.backgroundColor = UIColor.white.cgColor
-        imgVIcon.layer.borderColor = UIColor.init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.5).cgColor
-        contentView.addSubview(imgVIcon)
+//        imgVIcon = UIImageView.init(frame: CGRect.init())
+//        imgVIcon.layer.cornerRadius = 8
+//        imgVIcon.layer.borderWidth = 0.5
+//        imgVIcon.layer.backgroundColor = UIColor.white.cgColor
+//        imgVIcon.layer.borderColor = UIColor.init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.5).cgColor
+//        contentView.addSubview(imgVIcon)
         
         labTitle = UILabel.init(frame: CGRect.init())
         labTitle.font = UIFont.boldSystemFont(ofSize: 26)
@@ -75,10 +75,10 @@ class PYViewPageCell: UICollectionViewCell {
             make.height.equalTo(heightPlayer)
         }
         
-        imgVIcon.snp.makeConstraints { (make) in
-            make.left.top.equalToSuperview().offset(marginIcon)
-            make.width.height.equalTo(widthIcon)
-        }
+//        imgVIcon.snp.makeConstraints { (make) in
+//            make.left.top.equalToSuperview().offset(marginIcon)
+//            make.width.height.equalTo(widthIcon)
+//        }
         
         labTitle.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(marginTxtH)
@@ -102,15 +102,23 @@ class PYViewPageCell: UICollectionViewCell {
             player.setupData(model)
             
             labDesc.text = model.desc
+            labTitle.text = model.title
         }
-        
-        if let path = dataModel.iconPath {
-            imgVIcon.image = UIImage.init(named: path)
-        }
-        
-        labTitle.text = dataModel.name
     }
     
+    func connectItem() {
+        player.connectItem()
+    }
+    
+    func disConnectItem() {
+        player.disConnectItem()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        player.disConnectItem()
+    }
 }
 
 /**
@@ -126,10 +134,19 @@ class PYViewPageMedia: UIView {
     }()
     
     private var _playerLayer: AVPlayerLayer?
+    private var _isPlaying: Bool = false
 //    private var _imgVAnimation : PYViewAnimation?
     
+    private var _btnPlay: UIButton?
+    
+    private let cornerWidth: CGFloat = 20
+    
     var isPlaying: Bool {
-        return _videoPlayer.timeControlStatus == .playing
+        if #available(iOS 10.0, *) {
+            return _videoPlayer.timeControlStatus == .playing
+        } else {
+            return _isPlaying
+        }
     }
     
     override init(frame: CGRect) {
@@ -138,6 +155,8 @@ class PYViewPageMedia: UIView {
     }
     
     deinit {
+        print("cell release")
+        disConnectItem()
         NotificationCenter.init().removeObserver(self)
     }
     
@@ -151,6 +170,17 @@ class PYViewPageMedia: UIView {
         if layer == self.layer {
             _playerLayer?.bounds = layer.bounds
             _playerLayer?.position = layer.position
+            
+            // custom mask
+            if #available(iOS 11.0, *) {}
+            else {
+                if layer.mask == nil {
+                    let path = UIBezierPath.init(roundedRect: layer.bounds, byRoundingCorners: [.topRight, .topLeft], cornerRadii: CGSize.init(width: cornerWidth, height: cornerWidth))
+                    let mask = CAShapeLayer.init()
+                    mask.path = path.cgPath
+                    layer.mask = mask
+                }
+            }
         }
     }
     
@@ -165,9 +195,11 @@ class PYViewPageMedia: UIView {
         }
         
         // 设置mask
-        layer.cornerRadius = 20
-        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        layer.masksToBounds = true
+        if #available(iOS 11.0, *) {
+            layer.cornerRadius = cornerWidth
+            layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            layer.masksToBounds = true
+        }
     }
     
     func setupData(_ dataModel: FXConfigHelpModel) {
@@ -183,15 +215,40 @@ class PYViewPageMedia: UIView {
                 _playerLayer?.videoGravity = .resizeAspectFill
                 _playerLayer?.masksToBounds = true
                 layer.addSublayer(_playerLayer!)
+                
+                bringSubviewToFront(_imgV)
             }
             
-            _videoPlayer.replaceCurrentItem(with: dataModel.playerItem)
+            if _btnPlay == nil {
+                _btnPlay = UIButton.init(type: .custom)
+                _btnPlay?.setTitle("播放", for: .normal)
+                _btnPlay?.setTitle("暂停", for: .selected)
+                _btnPlay?.addTarget(self, action: #selector(btnPlayClicked(_:)), for: .touchUpInside)
+                addSubview(_btnPlay!)
+                
+                _btnPlay?.snp.makeConstraints({ (make) in
+                    make.width.equalTo(100)
+                    make.height.equalTo(40)
+                    make.center.equalToSuperview()
+                })
+            }
         }
         
-        // 更新通知
+        // 更新通知，注意object必须是AVPlayerItem，否则不会回调
         NotificationCenter.default.removeObserver(self)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleVideoPlayFinished(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: dataModel)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleVideoPlayFinished(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: dataModel.playerItem)
         
+    }
+    
+    func connectItem() {
+        guard let model = dataModel else { return }
+        pause()
+        _videoPlayer.replaceCurrentItem(with: model.playerItem)
+    }
+    
+    func disConnectItem() {
+        pause()
+        _videoPlayer.replaceCurrentItem(with: nil)
     }
     
     func play() {
@@ -199,8 +256,12 @@ class PYViewPageMedia: UIView {
         if model.sourceType == .image { return }
         
         if let _ = _playerLayer , !isPlaying {
+            _btnPlay?.isSelected = true
             _videoPlayer.play()
-            changeCover()
+            _isPlaying = true
+            changeCover(false)
+            
+            print("video start " + model.title!)
         }
     }
     
@@ -209,17 +270,35 @@ class PYViewPageMedia: UIView {
         if model.sourceType == .image { return }
         
         if let _ = _playerLayer, isPlaying {
+            _btnPlay?.isSelected = false
+            _isPlaying = false
             _videoPlayer.pause()
+            changeCover()
+            
+            print("video pause " + model.title!)
         }
     }
     
     private func changeCover(_ isVisiable: Bool = true) {
         _imgV.isHidden = !isVisiable
+        _btnPlay?.isHidden = !isVisiable
     }
     
     @objc private func handleVideoPlayFinished(_ sender: NSNotification) {
-        if let obj = sender.object as? FXConfigCellModel, obj == dataModel {
-            changeCover(false)
+        if let obj = sender.object as? AVPlayerItem, obj == dataModel?.playerItem {
+            // Apple: This notification may be posted on a different thread than the one on which the observer was registered.
+            DispatchQueue.main.async {
+                self.changeCover()
+                self.pause()
+            }
+        }
+    }
+    
+    @objc private func btnPlayClicked(_ btn: UIButton) {
+        if btn.isSelected {
+            pause()
+        } else {
+            play()
         }
     }
 }

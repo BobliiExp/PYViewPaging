@@ -51,6 +51,8 @@ class FXConfigCellModel: NSObject {
     private var _modifiedManual: Bool?
     var help: FXConfigHelpModel?
     
+    weak var pageCell: PYViewPageCell?
+    
     override init() {
         super.init()
         
@@ -80,14 +82,17 @@ class FXConfigHelpModel: NSObject {
     var configID: String?
     /** 资源路径 */
     var sourcePath: String?
+    /** 视频封面图片，没有则找视频第一帧 */
+    var coverPath: String?
     /** 视频默认展示的帧在视频中的时间点，或者帧序列图像默认展示的图像帧索引 */
-    var sourceTime: CMTimeValue = 0
+    private var sourceTime: CMTimeValue = 0
     /** 媒体类型 */
     var sourceType: FXConfigHelpSourceType = .video
     /** 是否自动播放 */
     var isAutoPlay: Bool = false
     /** 功能描述 */
     var desc: String?
+    var title: String?
     
     // MARK: - 视频相关
     
@@ -107,6 +112,15 @@ class FXConfigHelpModel: NSObject {
         get {
             if let img = _image {
                 return img
+            }
+            
+            if let path = coverPath {
+                do {
+                    let data = try Data.init(contentsOf: URL.init(fileURLWithPath: path), options: .uncached)
+                    _image = UIImage.init(data: data)
+                    return _image
+                    
+                } catch {}
             }
             
             switch sourceType {
