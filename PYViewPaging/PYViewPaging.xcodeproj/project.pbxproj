@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4406A6C7BD8B2317F913F85E /* Pods_PYViewPaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA219FE2F0B3FDB7047F63E8 /* Pods_PYViewPaging.framework */; };
+		C41FC96922534DAA00CBE5AF /* PYViewPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C41FC95D22534DAA00CBE5AF /* PYViewPage.swift */; };
+		C41FC96A22534DAA00CBE5AF /* video2.m4v in Resources */ = {isa = PBXBuildFile; fileRef = C41FC95F22534DAA00CBE5AF /* video2.m4v */; };
+		C41FC96B22534DAA00CBE5AF /* video1.m4v in Resources */ = {isa = PBXBuildFile; fileRef = C41FC96022534DAA00CBE5AF /* video1.m4v */; };
+		C41FC96C22534DAA00CBE5AF /* video4.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = C41FC96122534DAA00CBE5AF /* video4.mp4 */; };
+		C41FC96D22534DAA00CBE5AF /* video3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = C41FC96222534DAA00CBE5AF /* video3.mp4 */; };
+		C41FC96E22534DAA00CBE5AF /* img3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C41FC96322534DAA00CBE5AF /* img3.jpg */; };
+		C41FC96F22534DAA00CBE5AF /* img2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C41FC96422534DAA00CBE5AF /* img2.jpg */; };
+		C41FC97022534DAA00CBE5AF /* img1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C41FC96522534DAA00CBE5AF /* img1.jpg */; };
+		C41FC97122534DAA00CBE5AF /* PYViewPageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C41FC96622534DAA00CBE5AF /* PYViewPageModel.swift */; };
+		C41FC97222534DAA00CBE5AF /* PYViewPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C41FC96722534DAA00CBE5AF /* PYViewPageControl.swift */; };
+		C41FC97322534DAA00CBE5AF /* PYViewPageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C41FC96822534DAA00CBE5AF /* PYViewPageCell.swift */; };
 		C4809292224F130C00A53190 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4809291224F130C00A53190 /* AppDelegate.swift */; };
 		C4809294224F130C00A53190 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4809293224F130C00A53190 /* ViewController.swift */; };
 		C4809297224F130C00A53190 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4809295224F130C00A53190 /* Main.storyboard */; };
@@ -15,6 +27,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E1367163273AFD262586932 /* Pods-PYViewPaging.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PYViewPaging.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PYViewPaging/Pods-PYViewPaging.debug.xcconfig"; sourceTree = "<group>"; };
+		2E40C68352CC2FDAA3043375 /* Pods-PYViewPaging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PYViewPaging.release.xcconfig"; path = "Pods/Target Support Files/Pods-PYViewPaging/Pods-PYViewPaging.release.xcconfig"; sourceTree = "<group>"; };
+		C41FC95D22534DAA00CBE5AF /* PYViewPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PYViewPage.swift; sourceTree = "<group>"; };
+		C41FC95F22534DAA00CBE5AF /* video2.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = video2.m4v; sourceTree = "<group>"; };
+		C41FC96022534DAA00CBE5AF /* video1.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = video1.m4v; sourceTree = "<group>"; };
+		C41FC96122534DAA00CBE5AF /* video4.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = video4.mp4; sourceTree = "<group>"; };
+		C41FC96222534DAA00CBE5AF /* video3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = video3.mp4; sourceTree = "<group>"; };
+		C41FC96322534DAA00CBE5AF /* img3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img3.jpg; sourceTree = "<group>"; };
+		C41FC96422534DAA00CBE5AF /* img2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img2.jpg; sourceTree = "<group>"; };
+		C41FC96522534DAA00CBE5AF /* img1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img1.jpg; sourceTree = "<group>"; };
+		C41FC96622534DAA00CBE5AF /* PYViewPageModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PYViewPageModel.swift; sourceTree = "<group>"; };
+		C41FC96722534DAA00CBE5AF /* PYViewPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PYViewPageControl.swift; sourceTree = "<group>"; };
+		C41FC96822534DAA00CBE5AF /* PYViewPageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PYViewPageCell.swift; sourceTree = "<group>"; };
 		C480928E224F130C00A53190 /* PYViewPaging.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PYViewPaging.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4809291224F130C00A53190 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C4809293224F130C00A53190 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -22,6 +47,7 @@
 		C4809298224F130E00A53190 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C480929B224F130E00A53190 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C480929D224F130E00A53190 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CA219FE2F0B3FDB7047F63E8 /* Pods_PYViewPaging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PYViewPaging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +55,51 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4406A6C7BD8B2317F913F85E /* Pods_PYViewPaging.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6CC01782A9342B6707D01375 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0E1367163273AFD262586932 /* Pods-PYViewPaging.debug.xcconfig */,
+				2E40C68352CC2FDAA3043375 /* Pods-PYViewPaging.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		A864D21EACF95F3AC0CE0F73 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CA219FE2F0B3FDB7047F63E8 /* Pods_PYViewPaging.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C41FC95E22534DAA00CBE5AF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C41FC95F22534DAA00CBE5AF /* video2.m4v */,
+				C41FC96022534DAA00CBE5AF /* video1.m4v */,
+				C41FC96122534DAA00CBE5AF /* video4.mp4 */,
+				C41FC96222534DAA00CBE5AF /* video3.mp4 */,
+				C41FC96322534DAA00CBE5AF /* img3.jpg */,
+				C41FC96422534DAA00CBE5AF /* img2.jpg */,
+				C41FC96522534DAA00CBE5AF /* img1.jpg */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		C4809285224F130C00A53190 = {
 			isa = PBXGroup;
 			children = (
 				C4809290224F130C00A53190 /* PYViewPaging */,
 				C480928F224F130C00A53190 /* Products */,
+				6CC01782A9342B6707D01375 /* Pods */,
+				A864D21EACF95F3AC0CE0F73 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,6 +114,11 @@
 		C4809290224F130C00A53190 /* PYViewPaging */ = {
 			isa = PBXGroup;
 			children = (
+				C41FC95D22534DAA00CBE5AF /* PYViewPage.swift */,
+				C41FC96822534DAA00CBE5AF /* PYViewPageCell.swift */,
+				C41FC96722534DAA00CBE5AF /* PYViewPageControl.swift */,
+				C41FC96622534DAA00CBE5AF /* PYViewPageModel.swift */,
+				C41FC95E22534DAA00CBE5AF /* Resources */,
 				C4809291224F130C00A53190 /* AppDelegate.swift */,
 				C4809293224F130C00A53190 /* ViewController.swift */,
 				C4809295224F130C00A53190 /* Main.storyboard */,
@@ -71,9 +136,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C48092A0224F130E00A53190 /* Build configuration list for PBXNativeTarget "PYViewPaging" */;
 			buildPhases = (
+				80E49A925AD4FE0A6D4DE851 /* [CP] Check Pods Manifest.lock */,
 				C480928A224F130C00A53190 /* Sources */,
 				C480928B224F130C00A53190 /* Frameworks */,
 				C480928C224F130C00A53190 /* Resources */,
+				A0F30437F19D9A9DDB542BA5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -122,20 +189,78 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C41FC96C22534DAA00CBE5AF /* video4.mp4 in Resources */,
+				C41FC97022534DAA00CBE5AF /* img1.jpg in Resources */,
+				C41FC96A22534DAA00CBE5AF /* video2.m4v in Resources */,
 				C480929C224F130E00A53190 /* LaunchScreen.storyboard in Resources */,
 				C4809299224F130E00A53190 /* Assets.xcassets in Resources */,
+				C41FC96F22534DAA00CBE5AF /* img2.jpg in Resources */,
+				C41FC96B22534DAA00CBE5AF /* video1.m4v in Resources */,
 				C4809297224F130C00A53190 /* Main.storyboard in Resources */,
+				C41FC96D22534DAA00CBE5AF /* video3.mp4 in Resources */,
+				C41FC96E22534DAA00CBE5AF /* img3.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		80E49A925AD4FE0A6D4DE851 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PYViewPaging-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A0F30437F19D9A9DDB542BA5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-PYViewPaging/Pods-PYViewPaging-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PYViewPaging/Pods-PYViewPaging-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C480928A224F130C00A53190 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C41FC97222534DAA00CBE5AF /* PYViewPageControl.swift in Sources */,
+				C41FC96922534DAA00CBE5AF /* PYViewPage.swift in Sources */,
+				C41FC97322534DAA00CBE5AF /* PYViewPageCell.swift in Sources */,
 				C4809294224F130C00A53190 /* ViewController.swift in Sources */,
+				C41FC97122534DAA00CBE5AF /* PYViewPageModel.swift in Sources */,
 				C4809292224F130C00A53190 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -280,10 +405,11 @@
 		};
 		C48092A1224F130E00A53190 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0E1367163273AFD262586932 /* Pods-PYViewPaging.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S86KA93GD7;
+				DEVELOPMENT_TEAM = YFZ6GPTEHY;
 				INFOPLIST_FILE = PYViewPaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -298,10 +424,11 @@
 		};
 		C48092A2224F130E00A53190 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2E40C68352CC2FDAA3043375 /* Pods-PYViewPaging.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S86KA93GD7;
+				DEVELOPMENT_TEAM = YFZ6GPTEHY;
 				INFOPLIST_FILE = PYViewPaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
