@@ -126,7 +126,7 @@ class PYViewPage: UIView {
         _colloectionView.backgroundColor = UIColor.clear
         _colloectionView.contentInset = UIEdgeInsets.init(top: 0, left: _paddingH, bottom: 0, right: _paddingH)
 //        _colloectionView.isPagingEnabled = true
-        _colloectionView.decelerationRate = UIScrollView.DecelerationRate(rawValue: 0.98) // 减速速度
+        _colloectionView.decelerationRate = UIScrollView.DecelerationRate(rawValue: 0.99) // 减速速度
         addSubview(_colloectionView)
         
         _colloectionView.register(PYViewPageCell.self, forCellWithReuseIdentifier: _cellIdentifier)
@@ -235,6 +235,10 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
         let pageOffset = Int(round(offsetXDelta / pageWidth))
         if pageOffset != 0 {
              targetContentOffset.pointee.x = CGFloat(indexOfPage + pageOffset) * (_pageWidth + _paddingH) - _paddingH
+        } else {
+            if abs(offsetXDelta) > _paddingH*3 {
+                targetContentOffset.pointee.x = CGFloat(indexOfPage + (offsetXDelta>0 ? 1 : -1)) * (_pageWidth + _paddingH) - _paddingH
+            }
         }
     }
     

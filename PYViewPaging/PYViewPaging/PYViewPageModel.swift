@@ -49,12 +49,9 @@ class FXConfigCellModel: NSObject {
     /** 是否已经修改过 */
     private var _hasModified: Bool = false
     private var _modifiedManual: Bool?
-    var help: FXConfigHelpModel?
     
     override init() {
         super.init()
-        
-        help = FXConfigHelpModel.init()
     }
 }
 
