@@ -101,6 +101,7 @@ class PYViewPageControl: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    /// 实现滑动动画用
     func willJumpToIndex(_ offsetRatio: CGFloat) {
         if let curDot = _currentDot {
             curDot.snp.updateConstraints({ (make) in

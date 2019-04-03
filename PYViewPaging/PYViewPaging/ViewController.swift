@@ -30,42 +30,48 @@ class ViewController: UIViewController {
     }
     
     func setupData() {
+        viewPage.isLoopPlay = true
+        
         var pages: [FXConfigCellModel] = []
         var cell = FXConfigCellModel.init()
         cell.help = FXConfigHelpModel.init()
         cell.help?.coverPath = Bundle.main.path(forResource: "img1", ofType: "jpg")
         cell.help?.title = "video1"
+        cell.help?.configID = cell.help?.title
         cell.help?.sourcePath = Bundle.main.path(forResource: cell.help?.title, ofType: ".m4v")
         cell.help?.desc = cell.help?.sourcePath
+        cell.help?.isLoopPlay = viewPage.isLoopPlay
         pages.append(cell)
         
         cell = FXConfigCellModel.init()
         cell.help = FXConfigHelpModel.init()
         cell.help?.title = "video2"
+        cell.help?.configID = cell.help?.title
         cell.help?.sourcePath = Bundle.main.path(forResource: cell.help?.title, ofType: ".m4v")
         cell.help?.desc = cell.help?.sourcePath
+        cell.help?.isLoopPlay = viewPage.isLoopPlay
         pages.append(cell)
         
         cell = FXConfigCellModel.init()
         cell.help = FXConfigHelpModel.init()
         cell.help?.coverPath = Bundle.main.path(forResource: "img2", ofType: "jpg")
         cell.help?.title = "video3"
+        cell.help?.configID = cell.help?.title
         cell.help?.sourcePath = Bundle.main.path(forResource: cell.help?.title, ofType: ".mp4")
         cell.help?.desc = cell.help?.sourcePath
+        cell.help?.isLoopPlay = viewPage.isLoopPlay
         pages.append(cell)
         
         cell = FXConfigCellModel.init()
         cell.help = FXConfigHelpModel.init()
         cell.help?.coverPath = Bundle.main.path(forResource: "img3", ofType: "jpg")
         cell.help?.title = "video4"
+        cell.help?.configID = cell.help?.title
         cell.help?.sourcePath = Bundle.main.path(forResource: cell.help?.title, ofType: ".mp4")
         cell.help?.desc = cell.help?.sourcePath
         pages.append(cell)
         
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+5) {
-            self.viewPage.setupData(pages)
-        }
+        self.viewPage.setupData(pages)
     }
 
 }

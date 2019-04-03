@@ -51,8 +51,6 @@ class FXConfigCellModel: NSObject {
     private var _modifiedManual: Bool?
     var help: FXConfigHelpModel?
     
-    weak var pageCell: PYViewPageCell?
-    
     override init() {
         super.init()
         
@@ -74,6 +72,10 @@ enum FXConfigHelpSourceType: Int8 {
     case frame_animation
 }
 
+protocol FXConfigHelpDelegate: NSObjectProtocol {
+    func videoStatusChanged(_ isPause: Bool, model: FXConfigHelpModel, cover: Bool)
+}
+
 /**
  注意资源加载统一采用Data处理，且不做内存缓存支持
  */
@@ -88,21 +90,30 @@ class FXConfigHelpModel: NSObject {
     private var sourceTime: CMTimeValue = 0
     /** 媒体类型 */
     var sourceType: FXConfigHelpSourceType = .video
-    /** 是否自动播放 */
-    var isAutoPlay: Bool = false
+    /** 是否循环播放 */
+    var isLoopPlay: Bool = false
     /** 功能描述 */
     var desc: String?
     var title: String?
     
+    weak var delegate: FXConfigHelpDelegate?
+    var isPlaying: Bool = false
+    var isLoading: Bool = false
+    
     // MARK: - 视频相关
     
-    lazy var asset: AVAsset? = {
+    lazy var videoPlayer: AVPlayer? = {
+        guard let item = playerItem else { return nil }
+        return AVPlayer.init(playerItem: item)
+    }()
+    
+    private lazy var _asset: AVAsset? = {
         guard let path = sourcePath else { return nil }
         return AVAsset.init(url: URL.init(fileURLWithPath: path))
     }()
     
-    lazy var playerItem: AVPlayerItem? = {
-        guard let ass = asset else { return nil }
+    private lazy var playerItem: AVPlayerItem? = {
+        guard let ass = _asset else { return nil }
         return AVPlayerItem.init(asset: ass)
     }()
     
@@ -133,7 +144,7 @@ class FXConfigHelpModel: NSObject {
                 }
                 
             case .video:
-                if let ass = asset {
+                if let ass = _asset {
                 let generator = AVAssetImageGenerator.init(asset: ass)
                     generator.appliesPreferredTrackTransform = true
                     do {
@@ -156,9 +167,53 @@ class FXConfigHelpModel: NSObject {
         super.init()
         
         desc = " Could not load IOSurface for time string. Rendering locally instead."
+        // 无论object传入什么，通知回调时sender.object始终是AVPlayerItem
+        NotificationCenter.default.addObserver(self, selector: #selector(handleVideoPlayFinished(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
     }
     
-    func clean() {
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    func play() {
+        guard let player = videoPlayer else { return }
         
+        if !isPlaying {
+            isPlaying = true
+            player.play()
+            self.delegate?.videoStatusChanged(false, model: self, cover: true)
+        }
+    }
+    
+    func pause() {
+        guard let player = videoPlayer else { return }
+        
+        if isPlaying {
+            isPlaying = false
+            player.pause()
+            self.delegate?.videoStatusChanged(true, model: self, cover: false)
+        }
+    }
+    
+    /// 停止情况需要重置到起点
+    func pauseForReuse() {
+        isPlaying = false
+        videoPlayer?.pause()
+        videoPlayer?.seek(to: CMTime.init(value: 0, timescale: 1))
+        self.delegate?.videoStatusChanged(true, model: self, cover: true)
+    }
+    
+    @objc private func handleVideoPlayFinished(_ sender: NSNotification) {
+        if let obj = sender.object as? AVPlayerItem, obj == playerItem {
+            // Apple: This notification may be posted on a different thread than the one on which the observer was registered.
+            DispatchQueue.main.async {
+                self.videoPlayer?.seek(to: CMTime.init(value: 0, timescale: 1))
+                if self.isLoopPlay {
+                    self.videoPlayer?.play()
+                } else {
+                    self.pause()
+                }
+            }
+        }
     }
 }

@@ -105,48 +105,24 @@ class PYViewPageCell: UICollectionViewCell {
             labTitle.text = model.title
         }
     }
-    
-    func connectItem() {
-        player.connectItem()
-    }
-    
-    func disConnectItem() {
-        player.disConnectItem()
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        player.disConnectItem()
-    }
 }
 
 /**
  媒体集约处理
  */
-class PYViewPageMedia: UIView {
+class PYViewPageMedia: UIView, FXConfigHelpDelegate {
     weak var dataModel: FXConfigHelpModel?
     /** 图片默认是要展示的 */
     private var _imgV: UIImageView!
-    /** player一个就够了，切换item */
-    private lazy var _videoPlayer: AVPlayer = {
-        return AVPlayer.init()
-    }()
-    
+    /** 播放视频帧layer，播放器由数据提供不能重用因为playeritem不能关联多个播放器会崩溃*/
     private var _playerLayer: AVPlayerLayer?
     private var _isPlaying: Bool = false
 //    private var _imgVAnimation : PYViewAnimation?
-    
     private var _btnPlay: UIButton?
-    
     private let cornerWidth: CGFloat = 20
     
     var isPlaying: Bool {
-        if #available(iOS 10.0, *) {
-            return _videoPlayer.timeControlStatus == .playing
-        } else {
-            return _isPlaying
-        }
+        return dataModel?.isPlaying ?? false
     }
     
     override init(frame: CGRect) {
@@ -155,8 +131,8 @@ class PYViewPageMedia: UIView {
     }
     
     deinit {
+        dataModel?.pause()
         print("cell release")
-        disConnectItem()
         NotificationCenter.init().removeObserver(self)
     }
     
@@ -204,94 +180,65 @@ class PYViewPageMedia: UIView {
     
     func setupData(_ dataModel: FXConfigHelpModel) {
         self.dataModel = dataModel
-        
-        pause()
-        
+        dataModel.delegate = self
         _imgV.image = dataModel.coverImage
         
         if dataModel.sourceType == .video {
             if _playerLayer == nil && dataModel.sourcePath != nil {
-                _playerLayer = AVPlayerLayer.init(player: _videoPlayer)
+                _playerLayer = AVPlayerLayer.init()
                 _playerLayer?.videoGravity = .resizeAspectFill
                 _playerLayer?.masksToBounds = true
                 layer.addSublayer(_playerLayer!)
-                
                 bringSubviewToFront(_imgV)
             }
             
-            if _btnPlay == nil {
-                _btnPlay = UIButton.init(type: .custom)
-                _btnPlay?.setTitle("播放", for: .normal)
-                _btnPlay?.setTitle("暂停", for: .selected)
-                _btnPlay?.addTarget(self, action: #selector(btnPlayClicked(_:)), for: .touchUpInside)
-                addSubview(_btnPlay!)
-                
-                _btnPlay?.snp.makeConstraints({ (make) in
-                    make.width.equalTo(100)
-                    make.height.equalTo(40)
-                    make.center.equalToSuperview()
-                })
+            _playerLayer?.player = dataModel.videoPlayer
+            
+//            if _btnPlay == nil {
+//                _btnPlay = UIButton.init(type: .custom)
+//                _btnPlay?.setTitle("播放", for: .normal)
+//                _btnPlay?.setTitle("暂停", for: .selected)
+//                _btnPlay?.addTarget(self, action: #selector(btnPlayClicked(_:)), for: .touchUpInside)
+//                addSubview(_btnPlay!)
+//
+//                _btnPlay?.snp.makeConstraints({ (make) in
+//                    make.width.equalTo(100)
+//                    make.height.equalTo(40)
+//                    make.center.equalToSuperview()
+//                })
+//            }
+        }
+    }
+    
+    func videoStatusChanged(_ isPause: Bool, model: FXConfigHelpModel, cover: Bool) {
+        if model == dataModel {
+            if isPause {
+                _btnPlay?.isSelected = false
+                if cover { changeCover() }
+            } else {
+                _btnPlay?.isSelected = true
+                if cover { changeCover(false) }
             }
         }
-        
-        // 更新通知，注意object必须是AVPlayerItem，否则不会回调
-        NotificationCenter.default.removeObserver(self)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleVideoPlayFinished(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: dataModel.playerItem)
-        
-    }
-    
-    func connectItem() {
-        guard let model = dataModel else { return }
-        pause()
-        _videoPlayer.replaceCurrentItem(with: model.playerItem)
-    }
-    
-    func disConnectItem() {
-        pause()
-        _videoPlayer.replaceCurrentItem(with: nil)
     }
     
     func play() {
         guard let model = dataModel else { return }
         if model.sourceType == .image { return }
         
-        if let _ = _playerLayer , !isPlaying {
-            _btnPlay?.isSelected = true
-            _videoPlayer.play()
-            _isPlaying = true
-            changeCover(false)
-            
-            print("video start " + model.title!)
-        }
+        model.play()
     }
     
     func pause() {
         guard let model = dataModel else { return }
         if model.sourceType == .image { return }
         
-        if let _ = _playerLayer, isPlaying {
-            _btnPlay?.isSelected = false
-            _isPlaying = false
-            _videoPlayer.pause()
-            changeCover()
-            
-            print("video pause " + model.title!)
-        }
+        model.pause()
     }
     
     private func changeCover(_ isVisiable: Bool = true) {
         _imgV.isHidden = !isVisiable
         _btnPlay?.isHidden = !isVisiable
-    }
-    
-    @objc private func handleVideoPlayFinished(_ sender: NSNotification) {
-        if let obj = sender.object as? AVPlayerItem, obj == dataModel?.playerItem {
-            // Apple: This notification may be posted on a different thread than the one on which the observer was registered.
-            DispatchQueue.main.async {
-                self.changeCover()
-                self.pause()
-            }
-        }
     }
     
     @objc private func btnPlayClicked(_ btn: UIButton) {

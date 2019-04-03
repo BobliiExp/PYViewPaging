@@ -89,8 +89,6 @@ class PYViewPage: UIView {
         return CGFloat(indexOfPage) * (_pageWidth + _paddingH) - _paddingH
     }
     fileprivate var _heightItem: CGFloat = 0
-    fileprivate var _timeStart: TimeInterval = 0
-    
     private var _isFirstLoading = true
 
     // MARK: - public properties
@@ -128,7 +126,7 @@ class PYViewPage: UIView {
         _colloectionView.backgroundColor = UIColor.clear
         _colloectionView.contentInset = UIEdgeInsets.init(top: 0, left: _paddingH, bottom: 0, right: _paddingH)
 //        _colloectionView.isPagingEnabled = true
-        _colloectionView.decelerationRate = .normal
+        _colloectionView.decelerationRate = UIScrollView.DecelerationRate(rawValue: 0.98) // 减速速度
         addSubview(_colloectionView)
         
         _colloectionView.register(PYViewPageCell.self, forCellWithReuseIdentifier: _cellIdentifier)
@@ -164,7 +162,7 @@ extension PYViewPage {
         if index == indexOfPage { return }
         
         indexOfPage = index
-        scrollToPage(true, animation: animation)
+        scrollToPage(true, shouldScroll: true, animation: animation)
     }
 }
 
@@ -183,11 +181,10 @@ extension PYViewPage: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         
         if let model = _dataPages?[indexPath.row] {
             cell?.setupData(model)
-            model.pageCell = cell
             
             if _isFirstLoading {
-                cell?.connectItem()
                 _isFirstLoading = false
+                model.help?.play()
             }
         }
         
@@ -197,7 +194,7 @@ extension PYViewPage: UICollectionViewDelegate, UICollectionViewDataSource, UICo
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         // 这里才关联element
         if let temp = cell as? PYViewPageCell {
-            temp.disConnectItem()
+            temp.dataModel?.help?.pauseForReuse()
         }
     }
     
@@ -219,26 +216,42 @@ extension PYViewPage: UICollectionViewDelegate, UICollectionViewDataSource, UICo
 extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        _timeStart = NSDate.init().timeIntervalSince1970
+        _dataPages?[indexOfPage].help?.pause()
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        scrollEnd()
+        if !decelerate {
+            scrollEnd()
+        }
+    }
+    
+    /// 指定decelerate位移
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        // 滑动结束时判断是否需要切换页面
+        let pageWidth = _pageWidth
+        let offsetXDelta = targetContentOffset.pointee.x - _offsetXForCurrentPage
+        
+        // 根据滑动力度这里可能一次跳过多页面；合理控制decelerate的距离与达到页面宽度比例关系，以便更好的UI翻页体验
+        let pageOffset = Int(round(offsetXDelta / pageWidth))
+        if pageOffset != 0 {
+             targetContentOffset.pointee.x = CGFloat(indexOfPage + pageOffset) * (_pageWidth + _paddingH) - _paddingH
+        }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // 计算偏移值
-        let offset = scrollView.contentOffset.x
-        let delta = offset - _offsetXForCurrentPage
-        _pageControl.willJumpToIndex(delta/_pageWidth)
+        
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-
+        scrollEnd()
     }
     
     func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+
     }
     
     /// 滚动结束了处理弹性移动
@@ -246,8 +259,6 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
         guard let dataPages = _dataPages else {
             return
         }
-        
-        let deltaTime = NSDate.init().timeIntervalSince1970 - _timeStart
         
         // 滑动结束时判断是否需要切换页面
         let lastPageOffsetX = _offsetXForCurrentPage
@@ -257,77 +268,97 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
         
         // 排除特殊情况
         if indexOfPage == 0 && currentOffsetX < lastPageOffsetX {
-            scrollToPage(false)
+            scrollToPage(false, shouldScroll: false)
             return
         }
         
         if indexOfPage == (dataPages.count-1) && currentOffsetX > lastPageOffsetX {
-            scrollToPage(false)
+            scrollToPage(false, shouldScroll: false)
             return
         }
-        
-        // 滑动速度检查
-        let speed = abs(Double(offsetXDelta)/deltaTime)
-        let isQuicklySwip =  speed > 300.0
-        
-        print(speed)
         
         // 超出半个页面才会跳转控制
         if abs(offsetXDelta) > pageWidth/2 {
-            let pageOffset = Int((offsetXDelta / pageWidth).rounded( offsetXDelta > 0 ? .up : .down))
-            indexOfPage += pageOffset
-            scrollToPage(true)
+            let pageOffset = Int(round(offsetXDelta / pageWidth))
             
-        } else if isQuicklySwip {
-            indexOfPage += offsetXDelta>0 ? 1 : -1
-            scrollToPage(true)
+            if pageOffset > 0 && indexOfPage == dataPages.count-1 {
+                return
+            }
+            
+            if pageOffset < 0 && indexOfPage == 0 {
+                return
+            }
+            
+            indexOfPage += pageOffset
+            
+            scrollToPage(true, shouldScroll: true)
+            
         } else {
-            scrollToPage(false)
+            scrollToPage(false, shouldScroll: true)
         }
     }
     
-    fileprivate func scrollToPage(_ isPageChanged: Bool, animation: Bool = true) {
-        guard  let pages = _dataPages else {
+    fileprivate func scrollToPage(_ isPageChanged: Bool, shouldScroll: Bool, animation: Bool = true) {
+        guard let dataPages = _dataPages else {
             return
         }
         
-        let item = pages[indexOfPage]
+        if indexOfPage >= dataPages.count {
+            indexOfPage = dataPages.count - 1
+        }
+        
+        if indexOfPage < 0 {
+            indexOfPage = 0
+        }
+        
+        let item = dataPages[indexOfPage]
         
         if isPageChanged {
             self._delegate?.willScrollToPage(indexOfPage, item: item)
             _pageControl.jumpToIndex(indexOfPage)
+        } else {
+            item.help?.play()
         }
         
         var offset = _colloectionView.contentOffset
-        let directLeft = offset.x > _offsetXForCurrentPage
         offset.x = _offsetXForCurrentPage
         
         if animation {
-            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-                self._colloectionView.contentOffset = offset
-                if !isPageChanged {
-                    self._pageControl.willJumpToIndex(directLeft ? 0.001 : -0.001)
+            if shouldScroll {
+                UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                    self._colloectionView.contentOffset = offset
+                }) { (finished) in
+                    if finished && isPageChanged {
+                        self._delegate?.didScrollToPage(self.indexOfPage, item: item)
+                        // 自动播放
+                        item.help?.play()
+                    }
                 }
-            }) { (finished) in
-                if finished && isPageChanged {
-                    self._delegate?.didScrollToPage(self.indexOfPage, item: item)
-                    item.pageCell?.connectItem()
-                }
+            } else if isPageChanged {
+                self._delegate?.didScrollToPage(self.indexOfPage, item: item)
+                // 自动播放
+                item.help?.play()
             }
+            
         } else {
-            _colloectionView.contentOffset = offset
+            if shouldScroll {
+                self._colloectionView.contentOffset = offset
+            }
+            
             if isPageChanged {
-                _delegate?.didScrollToPage(indexOfPage, item: item)
-                item.pageCell?.connectItem()
-            } else {
-                _pageControl.willJumpToIndex(0)
+                self._delegate?.didScrollToPage(self.indexOfPage, item: item)
+                // 自动播放
+                item.help?.play()
             }
         }
     }
     
     func pageControlDidChangeToPage(_ index: Int) {
+        if indexOfPage == index { return }
+        
+        _dataPages?[indexOfPage].help?.pause()
         indexOfPage = index
-        scrollToPage(true)
+        scrollToPage(true, shouldScroll: true)
     }
 }
 
