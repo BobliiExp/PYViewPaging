@@ -19,7 +19,7 @@ protocol PYViewPageDelegate: NSObjectProtocol {
      - Authors: Bob
      - Date: 2019
      */
-    func willScrollToPage(_ index: Int, item: FXConfigCellModel)
+    func willScrollToPage(_ index: Int, item: FXConfigHelpModel)
     
     /**
      已经滚动到页面
@@ -30,7 +30,7 @@ protocol PYViewPageDelegate: NSObjectProtocol {
      - Authors: Bob
      - Date: 2019
      */
-    func didScrollToPage(_ index: Int, item: FXConfigCellModel)
+    func didScrollToPage(_ index: Int, item: FXConfigHelpModel)
     
     /**
      页面滑动中
@@ -51,7 +51,7 @@ protocol PYViewPageDelegate: NSObjectProtocol {
      - Authors: Bob
      - Date: 2019
      */
-    func pageDidSelected(_ index: Int, item: FXConfigCellModel)
+    func pageDidSelected(_ index: Int, item: FXConfigHelpModel)
 }
 
 /**
@@ -75,7 +75,7 @@ class PYViewPage: UIView {
     // MARK: - private properties
     fileprivate var _colloectionView: UICollectionView!
     fileprivate var _pageControl: PYViewPageControl!
-    fileprivate var _dataPages: [FXConfigCellModel]?
+    fileprivate var _dataPages: [FXConfigHelpModel]?
     fileprivate weak var _delegate: PYViewPageDelegate?
     private let _cellIdentifier = "cellIdentifier"
     
@@ -147,7 +147,7 @@ class PYViewPage: UIView {
         }
     }
     
-    func setupData(_ dataModels: [FXConfigCellModel]) {
+    func setupData(_ dataModels: [FXConfigHelpModel]) {
         _isFirstLoading = true
         _dataPages = dataModels
         _colloectionView.reloadData()
@@ -184,7 +184,7 @@ extension PYViewPage: UICollectionViewDelegate, UICollectionViewDataSource, UICo
             
             if _isFirstLoading {
                 _isFirstLoading = false
-                model.help?.play()
+                model.play()
             }
         }
         
@@ -194,7 +194,7 @@ extension PYViewPage: UICollectionViewDelegate, UICollectionViewDataSource, UICo
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         // 这里才关联element
         if let temp = cell as? PYViewPageCell {
-            temp.dataModel?.help?.pauseForReuse()
+            temp.dataModel?.pauseForReuse()
         }
     }
     
@@ -202,7 +202,7 @@ extension PYViewPage: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         if let model = _dataPages?[indexPath.row] {
             // 加载图片
             DispatchQueue.global().async {
-                _ = model.help?.coverImage
+                _ = model.coverImage
             }
         }
     }
@@ -216,7 +216,7 @@ extension PYViewPage: UICollectionViewDelegate, UICollectionViewDataSource, UICo
 extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        _dataPages?[indexOfPage].help?.pause()
+        _dataPages?[indexOfPage].pause()
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -317,7 +317,7 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
             self._delegate?.willScrollToPage(indexOfPage, item: item)
             _pageControl.jumpToIndex(indexOfPage)
         } else {
-            item.help?.play()
+            item.play()
         }
         
         var offset = _colloectionView.contentOffset
@@ -331,13 +331,13 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
                     if finished && isPageChanged {
                         self._delegate?.didScrollToPage(self.indexOfPage, item: item)
                         // 自动播放
-                        item.help?.play()
+                        item.play()
                     }
                 }
             } else if isPageChanged {
                 self._delegate?.didScrollToPage(self.indexOfPage, item: item)
                 // 自动播放
-                item.help?.play()
+                item.play()
             }
             
         } else {
@@ -348,7 +348,7 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
             if isPageChanged {
                 self._delegate?.didScrollToPage(self.indexOfPage, item: item)
                 // 自动播放
-                item.help?.play()
+                item.play()
             }
         }
     }
@@ -356,7 +356,7 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
     func pageControlDidChangeToPage(_ index: Int) {
         if indexOfPage == index { return }
         
-        _dataPages?[indexOfPage].help?.pause()
+        _dataPages?[indexOfPage].pause()
         indexOfPage = index
         scrollToPage(true, shouldScroll: true)
     }

@@ -9,15 +9,18 @@
 import UIKit
 import AVFoundation
 
+
 class PYViewPageCell: UICollectionViewCell {
-    /** 功能图标 */
-    private var imgVIcon: UIImageView!
+    
+    static let heightPlayer: CGFloat = 285
+    static let heightRemain: CGFloat = 150
+    static let heightHelpCell = heightPlayer + heightRemain
     /** 媒体 */
     private var player: PYViewPageMedia!
     private var labTitle: UILabel!
     private var labDesc: UILabel!
     
-    weak var dataModel: FXConfigCellModel?
+    weak var dataModel: FXConfigHelpModel?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,13 +34,6 @@ class PYViewPageCell: UICollectionViewCell {
     private func setupUI() {
         player = PYViewPageMedia.init(frame: CGRect.init())
         contentView.addSubview(player)
-        
-//        imgVIcon = UIImageView.init(frame: CGRect.init())
-//        imgVIcon.layer.cornerRadius = 8
-//        imgVIcon.layer.borderWidth = 0.5
-//        imgVIcon.layer.backgroundColor = UIColor.white.cgColor
-//        imgVIcon.layer.borderColor = UIColor.init(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.5).cgColor
-//        contentView.addSubview(imgVIcon)
         
         labTitle = UILabel.init(frame: CGRect.init())
         labTitle.font = UIFont.boldSystemFont(ofSize: 26)
@@ -61,24 +57,15 @@ class PYViewPageCell: UICollectionViewCell {
         layer.borderColor = UIColor.gray.withAlphaComponent(0.15).cgColor
         layer.borderWidth = 0.5
         
-        let marginIcon = 18
         let marginTxtH = 23
         let marginTxtV = 21
-        let heightPlayer = 285
-        let heightRemain = 150
-        let widthIcon = 37
         let heightTitle = 32
         
         // layout
         player.snp.makeConstraints { (make) in
             make.left.right.top.equalToSuperview()
-            make.height.equalTo(heightPlayer)
+            make.height.equalTo(PYViewPageCell.heightPlayer)
         }
-        
-//        imgVIcon.snp.makeConstraints { (make) in
-//            make.left.top.equalToSuperview().offset(marginIcon)
-//            make.width.height.equalTo(widthIcon)
-//        }
         
         labTitle.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(marginTxtH)
@@ -95,15 +82,11 @@ class PYViewPageCell: UICollectionViewCell {
         }
     }
     
-    func setupData(_ dataModel: FXConfigCellModel) {
+    func setupData(_ dataModel: FXConfigHelpModel) {
         self.dataModel = dataModel
-        
-        if let model = dataModel.help {
-            player.setupData(model)
-            
-            labDesc.text = model.desc
-            labTitle.text = model.title
-        }
+        player.setupData(dataModel)
+        labDesc.text = dataModel.desc
+        labTitle.text = dataModel.title
     }
 }
 
@@ -117,7 +100,7 @@ class PYViewPageMedia: UIView, FXConfigHelpDelegate {
     /** 播放视频帧layer，播放器由数据提供不能重用因为playeritem不能关联多个播放器会崩溃*/
     private var _playerLayer: AVPlayerLayer?
     private var _isPlaying: Bool = false
-//    private var _imgVAnimation : PYViewAnimation?
+    //    private var _imgVAnimation : PYViewAnimation?
     private var _btnPlay: UIButton?
     private let cornerWidth: CGFloat = 20
     
@@ -194,19 +177,19 @@ class PYViewPageMedia: UIView, FXConfigHelpDelegate {
             
             _playerLayer?.player = dataModel.videoPlayer
             
-//            if _btnPlay == nil {
-//                _btnPlay = UIButton.init(type: .custom)
-//                _btnPlay?.setTitle("播放", for: .normal)
-//                _btnPlay?.setTitle("暂停", for: .selected)
-//                _btnPlay?.addTarget(self, action: #selector(btnPlayClicked(_:)), for: .touchUpInside)
-//                addSubview(_btnPlay!)
-//
-//                _btnPlay?.snp.makeConstraints({ (make) in
-//                    make.width.equalTo(100)
-//                    make.height.equalTo(40)
-//                    make.center.equalToSuperview()
-//                })
-//            }
+            //            if _btnPlay == nil {
+            //                _btnPlay = UIButton.init(type: .custom)
+            //                _btnPlay?.setTitle("播放", for: .normal)
+            //                _btnPlay?.setTitle("暂停", for: .selected)
+            //                _btnPlay?.addTarget(self, action: #selector(btnPlayClicked(_:)), for: .touchUpInside)
+            //                addSubview(_btnPlay!)
+            //
+            //                _btnPlay?.snp.makeConstraints({ (make) in
+            //                    make.width.equalTo(100)
+            //                    make.height.equalTo(40)
+            //                    make.center.equalToSuperview()
+            //                })
+            //            }
         }
     }
     

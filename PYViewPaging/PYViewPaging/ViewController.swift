@@ -21,7 +21,7 @@ class ViewController: UIViewController {
     }
     
     func setupUI() {
-        viewPage = PYViewPage.init(self, heightItem: 285+150)
+        viewPage = PYViewPage.init(self, heightItem: PYViewPageCell.heightPlayer+PYViewPageCell.heightRemain)
         view.addSubview(viewPage)
         
         viewPage.snp.makeConstraints { (make) in
@@ -32,44 +32,41 @@ class ViewController: UIViewController {
     func setupData() {
         viewPage.isLoopPlay = true
         
-        var pages: [FXConfigCellModel] = []
-        var cell = FXConfigCellModel.init()
-        cell.help = FXConfigHelpModel.init()
-        cell.help?.coverPath = Bundle.main.path(forResource: "img1", ofType: "jpg")
-        cell.help?.title = "video1"
-        cell.help?.configID = cell.help?.title
-        cell.help?.sourcePath = Bundle.main.path(forResource: cell.help?.title, ofType: ".m4v")
-        cell.help?.desc = cell.help?.sourcePath
-        cell.help?.isLoopPlay = viewPage.isLoopPlay
-        pages.append(cell)
+        var pages: [FXConfigHelpModel] = []
         
-        cell = FXConfigCellModel.init()
-        cell.help = FXConfigHelpModel.init()
-        cell.help?.title = "video2"
-        cell.help?.configID = cell.help?.title
-        cell.help?.sourcePath = Bundle.main.path(forResource: cell.help?.title, ofType: ".m4v")
-        cell.help?.desc = cell.help?.sourcePath
-        cell.help?.isLoopPlay = viewPage.isLoopPlay
-        pages.append(cell)
+        var help = FXConfigHelpModel.init()
+        help.coverPath = Bundle.main.path(forResource: "img1", ofType: "jpg")
+        help.title = "video1"
+        help.configID = help.title
+        help.sourcePath = Bundle.main.path(forResource: help.title, ofType: ".m4v")
+        help.desc = help.sourcePath
+        help.isLoopPlay = viewPage.isLoopPlay
+        pages.append(help)
         
-        cell = FXConfigCellModel.init()
-        cell.help = FXConfigHelpModel.init()
-        cell.help?.coverPath = Bundle.main.path(forResource: "img2", ofType: "jpg")
-        cell.help?.title = "video3"
-        cell.help?.configID = cell.help?.title
-        cell.help?.sourcePath = Bundle.main.path(forResource: cell.help?.title, ofType: ".mp4")
-        cell.help?.desc = cell.help?.sourcePath
-        cell.help?.isLoopPlay = viewPage.isLoopPlay
-        pages.append(cell)
+        help = FXConfigHelpModel.init()
+        help.title = "video2"
+        help.configID = help.title
+        help.sourcePath = Bundle.main.path(forResource: help.title, ofType: ".m4v")
+        help.desc = help.sourcePath
+        help.isLoopPlay = viewPage.isLoopPlay
+        pages.append(help)
         
-        cell = FXConfigCellModel.init()
-        cell.help = FXConfigHelpModel.init()
-        cell.help?.coverPath = Bundle.main.path(forResource: "img3", ofType: "jpg")
-        cell.help?.title = "video4"
-        cell.help?.configID = cell.help?.title
-        cell.help?.sourcePath = Bundle.main.path(forResource: cell.help?.title, ofType: ".mp4")
-        cell.help?.desc = cell.help?.sourcePath
-        pages.append(cell)
+        help = FXConfigHelpModel.init()
+        help.coverPath = Bundle.main.path(forResource: "img2", ofType: "jpg")
+        help.title = "video3"
+        help.configID = help.title
+        help.sourcePath = Bundle.main.path(forResource: help.title, ofType: ".mp4")
+        help.desc = help.sourcePath
+        help.isLoopPlay = viewPage.isLoopPlay
+        pages.append(help)
+        
+        help = FXConfigHelpModel.init()
+        help.coverPath = Bundle.main.path(forResource: "img3", ofType: "jpg")
+        help.title = "video4"
+        help.configID = help.title
+        help.sourcePath = Bundle.main.path(forResource: help.title, ofType: ".mp4")
+        help.desc = help.sourcePath
+        pages.append(help)
         
         self.viewPage.setupData(pages)
     }
@@ -77,11 +74,11 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: PYViewPageDelegate {
-    func willScrollToPage(_ index: Int, item: FXConfigCellModel) {
+    func willScrollToPage(_ index: Int, item: FXConfigHelpModel) {
         
     }
     
-    func didScrollToPage(_ index: Int, item: FXConfigCellModel) {
+    func didScrollToPage(_ index: Int, item: FXConfigHelpModel) {
         
     }
     
@@ -89,7 +86,7 @@ extension ViewController: PYViewPageDelegate {
         
     }
     
-    func pageDidSelected(_ index: Int, item: FXConfigCellModel) {
+    func pageDidSelected(_ index: Int, item: FXConfigHelpModel) {
         
     }
     
