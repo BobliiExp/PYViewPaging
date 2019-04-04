@@ -139,7 +139,7 @@ class PYViewPageControl: UIView, UIGestureRecognizerDelegate {
     
     /// 没有再子控件区域内不响应
     private func checkGuesture(_ sender: UIGestureRecognizer, isTap: Bool) -> Bool {
-        let offset: CGFloat = 20
+        let offset: CGFloat = 40
         if let dotMin = self.viewWithTag(1000), let dotMax = self.viewWithTag(1000 + _numberOfPage - 1) {
             let minX = dotMin.frame.minX - offset
             let maxX = dotMax.frame.maxX + offset
