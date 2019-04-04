@@ -317,9 +317,11 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
         
         let item = dataPages[indexOfPage]
         
+        let indexCur = indexOfPage
+        
         if isPageChanged {
-            self._delegate?.willScrollToPage(indexOfPage, item: item)
-            _pageControl.jumpToIndex(indexOfPage)
+            self._delegate?.willScrollToPage(indexCur, item: item)
+            _pageControl.jumpToIndex(indexCur)
         } else {
             item.play()
         }
@@ -329,17 +331,17 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
         
         if animation {
             if shouldScroll {
-                UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                UIView.animate(withDuration: 0.16, delay: 0, options: .curveEaseOut, animations: {
                     self._colloectionView.contentOffset = offset
                 }) { (finished) in
-                    if finished && isPageChanged {
-                        self._delegate?.didScrollToPage(self.indexOfPage, item: item)
+                    if finished && isPageChanged && indexCur == self.indexOfPage {
+                        self._delegate?.didScrollToPage(indexCur, item: item)
                         // 自动播放
                         item.play()
                     }
                 }
             } else if isPageChanged {
-                self._delegate?.didScrollToPage(self.indexOfPage, item: item)
+                self._delegate?.didScrollToPage(indexCur, item: item)
                 // 自动播放
                 item.play()
             }
@@ -350,7 +352,7 @@ extension PYViewPage: UIScrollViewDelegate, PYViewPageControlDelegate {
             }
             
             if isPageChanged {
-                self._delegate?.didScrollToPage(self.indexOfPage, item: item)
+                self._delegate?.didScrollToPage(indexCur, item: item)
                 // 自动播放
                 item.play()
             }
